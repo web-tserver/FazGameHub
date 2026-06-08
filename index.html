@@ -247,11 +247,43 @@
             position: fixed; top: -9999px; left: -9999px; width: 750px; visibility: hidden;
         }
 
+        /* A4 STRICT PRINT SETTINGS */
         @media print {
-            body { background:white; padding:0; }
-            .app-topbar, .main-container > .card, .bottom-nav, .pdf-clone-container { display:none !important; }
-            .preview-wrapper { padding: 0; border: none; overflow: visible; }
-            .invoice-preview { box-shadow:none; border:none; padding:0; width:100%; max-width:100%; }
+            @page { 
+                size: A4 portrait; 
+                margin: 0.5cm; /* Slight margin so printers don't cut off edges */
+            }
+            body { 
+                background: white; 
+                padding: 0; 
+                margin: 0; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+            }
+            .app-topbar, .main-container > .card, .bottom-nav, .pdf-clone-container { 
+                display: none !important; 
+            }
+            .main-container { 
+                padding: 0; 
+                margin: 0; 
+                max-width: none; 
+            }
+            .preview-wrapper { 
+                padding: 0; 
+                border: none; 
+                overflow: visible; 
+                background: transparent; 
+            }
+            .invoice-preview { 
+                box-shadow: none; 
+                border: none; 
+                padding: 0; 
+                width: 100% !important; /* Force strictly to physical paper width */
+                max-width: 100% !important; 
+                height: 100%; 
+                margin: 0; 
+                page-break-after: avoid; 
+            }
         }
     </style>
 </head>
@@ -269,7 +301,6 @@
 
     <div class="main-container">
         
-        <!-- File Manager -->
         <div class="card collapsible collapsed" id="storageCard">
             <div class="card-header" onclick="toggleCard('storageCard')">
                 <i class="fa-solid fa-folder-open"></i> File Manager <i class="fa-solid fa-chevron-down toggle-arrow"></i>
@@ -289,7 +320,6 @@
             </div>
         </div>
 
-        <!-- Configuration Settings -->
         <div class="card">
             <div class="card-header"><i class="fa-solid fa-sliders"></i> Settings</div>
             <div class="card-body">
@@ -312,7 +342,6 @@
             </div>
         </div>
 
-        <!-- Company Details -->
         <div class="card collapsible collapsed" id="companyCard">
             <div class="card-header" onclick="toggleCard('companyCard')">
                 <i class="fa-solid fa-building"></i> Company Details <i class="fa-solid fa-chevron-down toggle-arrow"></i>
@@ -330,7 +359,6 @@ JIn Southville 1, Southville City
             </div>
         </div>
 
-        <!-- Client & Invoice Details -->
         <div class="card">
             <div class="card-header"><i class="fa-solid fa-user-tag"></i> Client & Billing</div>
             <div class="card-body">
@@ -347,7 +375,6 @@ JIn Southville 1, Southville City
             </div>
         </div>
 
-        <!-- Item List -->
         <div class="card">
             <div class="card-header"><i class="fa-solid fa-box-open"></i> Line Items</div>
             <div class="card-body">
@@ -363,7 +390,6 @@ JIn Southville 1, Southville City
             </div>
         </div>
 
-        <!-- Totals & Discount -->
         <div class="card">
             <div class="card-header"><i class="fa-solid fa-calculator"></i> Summary & Discounts</div>
             <div class="card-body">
@@ -384,7 +410,6 @@ JIn Southville 1, Southville City
             </div>
         </div>
 
-        <!-- Payment & Notes -->
         <div class="card collapsible collapsed" id="paymentCard">
             <div class="card-header" onclick="toggleCard('paymentCard')"><i class="fa-solid fa-credit-card"></i> Payment & Notes <i class="fa-solid fa-chevron-down toggle-arrow"></i></div>
             <div class="card-body">
@@ -396,21 +421,17 @@ JIn Southville 1, Southville City
             </div>
         </div>
 
-        <!-- Live Preview Header -->
         <div style="text-align: center; margin-top: 10px;">
             <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px;"><i class="fa-solid fa-eye"></i> Document Preview</span>
         </div>
 
-        <!-- Horizontal Scrolling Preview Wrapper -->
         <div class="preview-wrapper">
             <div class="invoice-preview" id="invoicePreview">
-                <!-- Programmatic Sheet Render Output Context -->
-            </div>
+                </div>
         </div>
 
     </div>
 
-    <!-- Sticky Navigation Actions -->
     <div class="bottom-nav">
         <button class="nav-item" onclick="document.getElementById('invoicePreview').scrollIntoView({behavior: 'smooth'})">
             <i class="fa-regular fa-eye"></i><span>Preview</span>
@@ -431,7 +452,6 @@ JIn Southville 1, Southville City
         </button>
     </div>
 
-    <!-- Hidden clone container for PDF capture -->
     <div class="pdf-clone-container" id="pdfCloneContainer"></div>
 
     <script>
@@ -696,7 +716,6 @@ JIn Southville 1, Southville City
                         <input class="item-desc" placeholder="Item Name / Product" oninput="app.updatePreview()">
                     </div>
                     <div class="form-group">
-                        <!-- Textarea for multiline support -->
                         <textarea class="item-detail" placeholder="Specs or Details (Optional)" oninput="app.updatePreview()" style="resize:vertical; min-height:60px;" rows="2"></textarea>
                     </div>
                     <div class="item-math-row">
