@@ -100,7 +100,7 @@
         .form-group label { font-size:0.7rem; font-weight:600; text-transform:uppercase; color: var(--text-dim); letter-spacing: 0.5px;}
         .form-group input, .form-group select, .form-group textarea {
             padding: 14px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-md);
-            font-size: 16px; 
+            font-size: 16px; /* 16px prevents iOS auto-zoom */
             background: var(--surface-light); color: var(--text); font-family:var(--font);
             width:100%; outline: none; transition: all 0.2s; appearance: none;
         }
@@ -174,7 +174,7 @@
         }
         .invoice-preview {
             background: #ffffff; color: #1e293b; padding: 40px; 
-            width: 750px; 
+            width: 750px; /* Fixed width for perfect A4 scale */
             font-size: 14px; line-height: 1.5; position: relative; margin: 0 auto;
         }
         
@@ -194,6 +194,7 @@
         .inv-table th.right, .inv-table td.right { text-align: right; color: #0f172a; } 
         .inv-item-name { font-weight: 700; color: #0f172a; display: block; }
         
+        /* Fixed detail section for multiline text */
         .inv-item-detail { 
             font-size: 12px; 
             color: #64748b; 
@@ -292,7 +293,7 @@
             <div class="logo-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
             <div>
                 <h1>Invoice System</h1>
-                <div class="subtitle" id="topbarDocLabel">Invoice Studio</div>
+                <div class="subtitle" id="topbarDocLabel">FazGame Empire</div>
             </div>
         </div>
         <button class="btn-icon" onclick="app.clearForm()" title="Clear Form"><i class="fa-solid fa-rotate-right"></i></button>
@@ -807,7 +808,7 @@ JIn Southville 1, Southville City
                 const bName = getFormVal('bankName'), bHolder = getFormVal('acctName'), bRouteNo = getFormVal('acctNumber');
                 const implementationNotes = getFormVal('notesText');
 
-                document.getElementById('topbarDocLabel').textContent = docProfileType === "QUOTATION" ? "Quotation Studio" : "Invoice Studio";
+                document.getElementById('topbarDocLabel').textContent = docProfileType === "QUOTATION" ? "FazGame Empire (Quotation)" : "FazGame Empire";
 
                 let innerTableRowsHtml = '';
                 items.forEach((item, index) => {
@@ -844,11 +845,14 @@ JIn Southville 1, Southville City
                     <div class="paid-stamp ${isPaid ? 'visible' : ''}" id="paidStamp">PAID</div>
                     
                     <div class="inv-header">
-                        <div>
-                            <h3 style="font-size:1.6rem; font-weight:800; color:#0f172a; margin-bottom:4px;">${escapeHtmlEncoding(cName)}</h3>
-                            <p style="font-size:12px; color:#475569; font-weight:600;">SSM: ${escapeHtmlEncoding(cSSM)}</p>
-                            <p style="white-space:pre-line; color:#475569; font-size:12px; margin-top:6px; max-width:320px; line-height:1.4;">${escapeHtmlEncoding(cAddr)}</p>
-                            <p style="font-size:12px; color:#475569; margin-top:6px;">📞 ${escapeHtmlEncoding(cPhone)}  |  ✉️ ${escapeHtmlEncoding(cEmail)}</p>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <img src="logo.png" alt="Company Logo" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px;" onerror="this.style.display='none'">
+                            <div>
+                                <h3 style="font-size:1.6rem; font-weight:800; color:#0f172a; margin-bottom:4px;">${escapeHtmlEncoding(cName)}</h3>
+                                <p style="font-size:12px; color:#475569; font-weight:600;">SSM: ${escapeHtmlEncoding(cSSM)}</p>
+                                <p style="white-space:pre-line; color:#475569; font-size:12px; margin-top:6px; max-width:280px; line-height:1.4;">${escapeHtmlEncoding(cAddr)}</p>
+                                <p style="font-size:12px; color:#475569; margin-top:6px;">📞 ${escapeHtmlEncoding(cPhone)}  |  ✉️ ${escapeHtmlEncoding(cEmail)}</p>
+                            </div>
                         </div>
                         <div style="text-align:right; display:flex; flex-direction:column; justify-content:space-between; align-items:flex-end;">
                             <div class="inv-title">${displayTypeHeaderLabel}</div>
