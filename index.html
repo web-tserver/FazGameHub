@@ -193,7 +193,16 @@
         .inv-table td { padding:12px 8px; border-bottom:1px solid #e2e8f0; font-size: 14px; vertical-align: top; }
         .inv-table th.right, .inv-table td.right { text-align: right; color: #0f172a; } 
         .inv-item-name { font-weight: 700; color: #0f172a; display: block; }
-        .inv-item-detail { font-size: 12px; color: #64748b; margin-top: 4px; display: block; }
+        
+        /* Fixed detail section for multiline text */
+        .inv-item-detail { 
+            font-size: 12px; 
+            color: #64748b; 
+            margin-top: 4px; 
+            display: block; 
+            white-space: pre-line; 
+            line-height: 1.4;
+        }
         
         .totals-section { display:flex; justify-content:flex-end; margin-top: 16px; }
         .totals-table { width: 280px; border-collapse: collapse; }
@@ -203,7 +212,7 @@
         
         .payment-details { margin-top:24px; padding-top:16px; border-top:1px solid #e2e8f0; color:#475569; }
         .payment-details h4, .notes-section h4 { color: #0f172a; font-size: 13px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .notes-section { margin-top:16px; color:#64748b; font-size: 13px;}
+        .notes-section { margin-top:16px; color:#64748b; font-size: 13px; white-space: pre-line;}
 
         /* Mobile Bottom Nav */
         .bottom-nav {
@@ -687,7 +696,8 @@ JIn Southville 1, Southville City
                         <input class="item-desc" placeholder="Item Name / Product" oninput="app.updatePreview()">
                     </div>
                     <div class="form-group">
-                        <input class="item-detail" placeholder="Specs or Details (Optional)" oninput="app.updatePreview()">
+                        <!-- Textarea for multiline support -->
+                        <textarea class="item-detail" placeholder="Specs or Details (Optional)" oninput="app.updatePreview()" style="resize:vertical; min-height:60px;" rows="2"></textarea>
                     </div>
                     <div class="item-math-row">
                         <div class="form-group" style="flex: 0 0 80px;">
@@ -884,7 +894,6 @@ JIn Southville 1, Southville City
 
             function getFormVal(id) { return document.getElementById(id)?.value || ''; }
             function escapeHtmlEncoding(stringData) { const div = document.createElement('div'); div.textContent = stringData; return div.innerHTML; }
-            function escapeAttributeStr(stringData) { return stringData.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
             function parseDateTimeString(rawStringDate) { if (!rawStringDate) return '—'; return new Date(rawStringDate).toLocaleDateString('en-MY', { day: 'numeric', month: 'long', year: 'numeric' }); }
 
             function autoGenerateName() {
@@ -1097,9 +1106,21 @@ JIn Southville 1, Southville City
                 return pdf.output('blob');
             }
 
+            function escapeAttributeStr(stringData) {
+                return stringData.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
+
+            // --- Updated Dynamic File Naming Function ---
             function generateFileNamingString() {
-                const docTypePrefix = document.getElementById('docTypeSelect').value.toLowerCase();
-                return `${docTypePrefix}.pdf`;
+                const docTypePrefix = document.getElementById('docTypeSelect').value;
+                const docTypeFormatted = docTypePrefix.charAt(0).toUpperCase() + docTypePrefix.slice(1).toLowerCase();
+                
+                const customerNameRaw = getFormVal('custName').trim() || 'Client';
+                const customerName = customerNameRaw.replace(/[\\/:*?"<>|]/g, ''); 
+                
+                const invoiceNumber = getFormVal('invNumber').trim() || 'No-Ref';
+
+                return `Fazgame_${docTypeFormatted}_${customerName}_${invoiceNumber}.pdf`;
             }
 
             async function downloadPDF() {
@@ -1126,7 +1147,7 @@ JIn Southville 1, Southville City
                     if (navigator.share && navigator.canShare && navigator.canShare({ files: [standaloneSystemFile] })) {
                         await navigator.share({
                             files: [standaloneSystemFile],
-                            title: `Document - ${getFormVal('invNumber')}`,
+                            title: absoluteFilename.replace('.pdf', ''),
                             text: `Document generated via FAZ GAME EMPIRE.`
                         });
                     } else {
@@ -1140,10 +1161,16 @@ JIn Southville 1, Southville City
             function printInvoice() { 
                 const previewEl = document.getElementById('invoicePreview');
                 const originalWidth = previewEl.style.width;
+                
+                // Temporarily alter document title so "Save to PDF" uses the correct filename
+                const originalTitle = document.title;
+                document.title = generateFileNamingString().replace('.pdf', '');
+
                 previewEl.style.width = '750px';
                 setTimeout(() => {
                     window.print();
                     previewEl.style.width = originalWidth;
+                    document.title = originalTitle; // Revert Title
                 }, 10);
             }
 
