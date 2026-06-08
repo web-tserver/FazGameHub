@@ -164,7 +164,7 @@
         }
         .item-entry-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 4px;}
         .item-math-row { display: flex; gap: 10px; align-items: flex-end; }
-        .amount-display { font-size: 1rem; font-weight: 800; color: var(--accent); }
+        .amount-display { font-size: 1.1rem; font-weight: 800; color: var(--accent); }
 
         /* Document Canvas Preview Layout */
         .preview-wrapper { 
@@ -260,6 +260,7 @@
 
     <div class="main-container">
         
+        <!-- File Manager -->
         <div class="card collapsible collapsed" id="storageCard">
             <div class="card-header" onclick="toggleCard('storageCard')">
                 <i class="fa-solid fa-folder-open"></i> File Manager <i class="fa-solid fa-chevron-down toggle-arrow"></i>
@@ -279,6 +280,7 @@
             </div>
         </div>
 
+        <!-- Configuration Settings -->
         <div class="card">
             <div class="card-header"><i class="fa-solid fa-sliders"></i> Settings</div>
             <div class="card-body">
@@ -301,6 +303,7 @@
             </div>
         </div>
 
+        <!-- Company Details -->
         <div class="card collapsible collapsed" id="companyCard">
             <div class="card-header" onclick="toggleCard('companyCard')">
                 <i class="fa-solid fa-building"></i> Company Details <i class="fa-solid fa-chevron-down toggle-arrow"></i>
@@ -318,6 +321,7 @@ JIn Southville 1, Southville City
             </div>
         </div>
 
+        <!-- Client & Invoice Details -->
         <div class="card">
             <div class="card-header"><i class="fa-solid fa-user-tag"></i> Client & Billing</div>
             <div class="card-body">
@@ -334,6 +338,7 @@ JIn Southville 1, Southville City
             </div>
         </div>
 
+        <!-- Item List -->
         <div class="card">
             <div class="card-header"><i class="fa-solid fa-box-open"></i> Line Items</div>
             <div class="card-body">
@@ -349,6 +354,7 @@ JIn Southville 1, Southville City
             </div>
         </div>
 
+        <!-- Totals & Discount -->
         <div class="card">
             <div class="card-header"><i class="fa-solid fa-calculator"></i> Summary & Discounts</div>
             <div class="card-body">
@@ -369,6 +375,7 @@ JIn Southville 1, Southville City
             </div>
         </div>
 
+        <!-- Payment & Notes -->
         <div class="card collapsible collapsed" id="paymentCard">
             <div class="card-header" onclick="toggleCard('paymentCard')"><i class="fa-solid fa-credit-card"></i> Payment & Notes <i class="fa-solid fa-chevron-down toggle-arrow"></i></div>
             <div class="card-body">
@@ -380,17 +387,21 @@ JIn Southville 1, Southville City
             </div>
         </div>
 
+        <!-- Live Preview Header -->
         <div style="text-align: center; margin-top: 10px;">
             <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px;"><i class="fa-solid fa-eye"></i> Document Preview</span>
         </div>
 
+        <!-- Horizontal Scrolling Preview Wrapper -->
         <div class="preview-wrapper">
             <div class="invoice-preview" id="invoicePreview">
-                </div>
+                <!-- Programmatic Sheet Render Output Context -->
+            </div>
         </div>
 
     </div>
 
+    <!-- Sticky Navigation Actions -->
     <div class="bottom-nav">
         <button class="nav-item" onclick="document.getElementById('invoicePreview').scrollIntoView({behavior: 'smooth'})">
             <i class="fa-regular fa-eye"></i><span>Preview</span>
@@ -411,6 +422,7 @@ JIn Southville 1, Southville City
         </button>
     </div>
 
+    <!-- Hidden clone container for PDF capture -->
     <div class="pdf-clone-container" id="pdfCloneContainer"></div>
 
     <script>
@@ -663,7 +675,6 @@ JIn Southville 1, Southville City
                 updatePreview();
             }
 
-            // Refactored to render a mobile-friendly Card
             function appendRowEntry(silentMode = false) {
                 const rowElement = document.createElement('div');
                 rowElement.className = 'item-entry-card';
@@ -679,7 +690,7 @@ JIn Southville 1, Southville City
                         <input class="item-detail" placeholder="Specs or Details (Optional)" oninput="app.updatePreview()">
                     </div>
                     <div class="item-math-row">
-                        <div class="form-group" style="flex: 0 0 70px;">
+                        <div class="form-group" style="flex: 0 0 80px;">
                             <label>Qty</label>
                             <input class="item-qty" type="number" value="1" step="1" min="1" oninput="app.updatePreview()" style="text-align:center; padding: 14px 8px;">
                         </div>
@@ -687,10 +698,10 @@ JIn Southville 1, Southville City
                             <label>Unit Price</label>
                             <input class="item-price" type="number" value="0.00" step="0.01" style="text-align:right;" oninput="app.updatePreview()">
                         </div>
-                        <div class="form-group" style="flex: 1; align-items: flex-end; padding-bottom: 12px;">
-                            <label style="margin-bottom: 4px;">Total</label>
-                            <div class="amount-display">RM 0.00</div>
-                        </div>
+                    </div>
+                    <div class="form-group" style="align-items: flex-end; margin-top: 8px; padding-top: 12px; border-top: 1px dashed var(--border);">
+                        <label style="margin-bottom: 4px; font-size: 0.65rem;">Item Total</label>
+                        <div class="amount-display" style="font-size: 1.1rem;">RM 0.00</div>
                     </div>
                 `;
                 tbody.appendChild(rowElement);
