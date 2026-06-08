@@ -104,10 +104,28 @@
             background: var(--surface-light); color: var(--text); font-family:var(--font);
             width:100%; outline: none; transition: all 0.2s; appearance: none;
         }
+        
+        /* Specific override for date inputs to ensure calendar icon is visible on mobile */
+        .form-group input[type="date"] {
+            appearance: auto;
+            -webkit-appearance: auto;
+            position: relative;
+        }
+        .form-group input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.8); /* Makes the calendar icon visible on dark mode */
+            cursor: pointer;
+            opacity: 1;
+        }
+
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             border-color: var(--accent); background: rgba(255, 215, 0, 0.02);
         }
         .form-group textarea { resize:vertical; min-height:80px; }
+
+        .input-error {
+            border-color: var(--danger) !important;
+            box-shadow: 0 0 0 3px rgba(255, 74, 104, 0.15) !important;
+        }
 
         /* Buttons */
         .btn {
@@ -269,7 +287,7 @@
                 -webkit-print-color-adjust: exact; 
                 print-color-adjust: exact; 
             }
-            .app-topbar, .main-container > .card, .bottom-nav, .pdf-clone-container { 
+            .app-topbar, .main-container > .card, .bottom-nav, .pdf-clone-container, .no-print { 
                 display: none !important; 
             }
             .main-container { 
@@ -375,10 +393,27 @@ JIn Southville 1, Southville City
         <div class="card">
             <div class="card-header"><i class="fa-solid fa-user-tag"></i> Client & Billing</div>
             <div class="card-body">
-                <div class="form-group"><label>Client Name</label><input type="text" id="custName" value="Ahmad Fikri" oninput="app.updatePreview()"></div>
-                <div class="form-group"><label>Company (Optional)</label><input type="text" id="custCompany" oninput="app.updatePreview()"></div>
-                <div class="form-group"><label>Billing Address</label><textarea id="custAddr" oninput="app.updatePreview()">Jalan Ampang, 68000 Ampang</textarea></div>
-                <div class="form-group"><label>Email / Phone</label><input type="text" id="custEmail" value="ahmad@email.com" oninput="app.updatePreview()"></div>
+                <!-- REVISED CLIENT INFO FIELDS -->
+                <div class="form-group">
+                    <label>Client Name <span style="color:var(--danger);">*</span></label>
+                    <input type="text" id="custName" placeholder="e.g. Ahmad Fikri" oninput="app.updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label>Phone <span style="color:var(--danger);">*</span></label>
+                    <input type="tel" id="custPhone" placeholder="e.g. 0123456789" oninput="app.updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label>Email (Optional)</label>
+                    <input type="email" id="custEmail" placeholder="e.g. ahmad@email.com" oninput="app.updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label>Company Name (Optional)</label>
+                    <input type="text" id="custCompany" placeholder="e.g. Fikri Enterprise" oninput="app.updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label>Billing Address (Optional)</label>
+                    <textarea id="custAddr" placeholder="e.g. Jalan Ampang, 68000 Ampang" oninput="app.updatePreview()"></textarea>
+                </div>
                 <hr style="border-color: var(--border); margin: 8px 0;">
                 <div class="form-group"><label id="formSerialLabel">Invoice No.</label><input type="text" id="invNumber" value="INV-2026-0042" oninput="app.updatePreview()"></div>
                 <div class="form-row">
@@ -438,7 +473,7 @@ JIn Southville 1, Southville City
         </div>
 
         <!-- Live Preview Header -->
-        <div style="text-align: center; margin-top: 10px;">
+        <div class="no-print" style="text-align: center; margin-top: 10px;">
             <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px;"><i class="fa-solid fa-eye"></i> Document Preview</span>
         </div>
 
@@ -675,6 +710,34 @@ JIn Southville 1, Southville City
                 updatePreview();
             }
 
+            // Centralized Validation Checker
+            function validateRequiredFields() {
+                let isValid = true;
+                const nameInput = document.getElementById('custName');
+                const phoneInput = document.getElementById('custPhone');
+                
+                [nameInput, phoneInput].forEach(inp => {
+                    if (!inp.value.trim()) {
+                        inp.classList.add('input-error');
+                        isValid = false;
+                    } else {
+                        inp.classList.remove('input-error');
+                    }
+                });
+                
+                if (!isValid) {
+                    alert('Please fill in the required fields: Client Name and Phone.');
+                    
+                    // Auto-open client details card if collapsed so user sees the errors
+                    const clientCard = document.getElementById('custName').closest('.card');
+                    if (clientCard.classList.contains('collapsed')) {
+                        clientCard.classList.remove('collapsed');
+                    }
+                }
+                
+                return isValid;
+            }
+
             function handleDocTypeSwitch() {
                 const profileType = document.getElementById('docTypeSelect').value;
                 const serialLabel = document.getElementById('formSerialLabel');
@@ -807,12 +870,18 @@ JIn Southville 1, Southville City
             }
 
             function updatePreview() {
+                // Clear errors on typing
+                const nameInput = document.getElementById('custName');
+                const phoneInput = document.getElementById('custPhone');
+                if(nameInput.value.trim()) nameInput.classList.remove('input-error');
+                if(phoneInput.value.trim()) phoneInput.classList.remove('input-error');
+
                 const { items, subtotal, discount, total } = executeCalculations();
                 const previewCanvasTarget = document.getElementById('invoicePreview');
                 const docProfileType = document.getElementById('docTypeSelect').value;
                 
                 const cName = getFormVal('compName'), cSSM = getFormVal('compSSM'), cAddr = getFormVal('compAddr'), cPhone = getFormVal('compPhone'), cEmail = getFormVal('compEmail');
-                const custName = getFormVal('custName'), custCo = getFormVal('custCompany'), custAddr = getFormVal('custAddr'), custEmail = getFormVal('custEmail');
+                const custName = getFormVal('custName'), custPhone = getFormVal('custPhone'), custEmail = getFormVal('custEmail'), custCo = getFormVal('custCompany'), custAddr = getFormVal('custAddr');
                 const docSerial = getFormVal('invNumber'), dateIssued = parseDateTimeString(getFormVal('invDate')), dateLimit = parseDateTimeString(getFormVal('invDueDate'));
                 const bName = getFormVal('bankName'), bHolder = getFormVal('acctName'), bRouteNo = getFormVal('acctNumber');
                 const implementationNotes = getFormVal('notesText');
@@ -839,7 +908,6 @@ JIn Southville 1, Southville City
 
                 const displayTypeHeaderLabel = docProfileType === "QUOTATION" ? "QUOTATION" : "INVOICE";
                 
-                // Construct the footer block using the conditionally rendered stamp
                 const footerFlexContent = `
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top:24px; padding-top:16px; border-top:1px solid #e2e8f0;">
                         <div style="flex: 1;">
@@ -867,6 +935,11 @@ JIn Southville 1, Southville City
                     </div>
                 `;
 
+                const contactInfo = [];
+                if(custPhone) contactInfo.push(`📞 ${escapeHtmlEncoding(custPhone)}`);
+                if(custEmail) contactInfo.push(`✉️ ${escapeHtmlEncoding(custEmail)}`);
+                const contactHtml = contactInfo.length > 0 ? `<p style="font-size:13px; color:#64748b; margin-top:2px;">${contactInfo.join('  |  ')}</p>` : '';
+
                 previewCanvasTarget.innerHTML = `
                     <div class="inv-header">
                         <div style="display: flex; gap: 16px; align-items: flex-start;">
@@ -893,10 +966,10 @@ JIn Southville 1, Southville City
                     <div class="info-grid-inv">
                         <div>
                             <h4 style="font-size:12px; text-transform:uppercase; color:#64748b; letter-spacing:0.5px; margin-bottom:6px;">Bill To</h4>
-                            <p style="font-size:16px; font-weight:700; color:#0f172a;">${escapeHtmlEncoding(custName)}</p>
-                            ${custCo ? `<p style="font-size:13px; font-weight:600; color:#475569; margin-top:2px;">${escapeHtmlEncoding(custCo)}</p>` : ''}
-                            <p style="white-space:pre-line; font-size:13px; color:#475569; margin-top:4px; max-width:400px; line-height:1.4;">${escapeHtmlEncoding(custAddr)}</p>
-                            <p style="font-size:13px; color:#64748b; margin-top:4px;">Contact: ${escapeHtmlEncoding(custEmail)}</p>
+                            <p style="font-size:16px; font-weight:700; color:#0f172a;">${escapeHtmlEncoding(custName) || '—'}</p>
+                            ${contactHtml}
+                            ${custCo ? `<p style="font-size:13px; font-weight:600; color:#475569; margin-top:4px;">${escapeHtmlEncoding(custCo)}</p>` : ''}
+                            ${custAddr ? `<p style="white-space:pre-line; font-size:13px; color:#475569; margin-top:2px; max-width:400px; line-height:1.4;">${escapeHtmlEncoding(custAddr)}</p>` : ''}
                         </div>
                     </div>
                     
@@ -958,6 +1031,8 @@ JIn Southville 1, Southville City
             }
 
             function saveToLocalStorage() {
+                if(!validateRequiredFields()) return;
+
                 const storageKeyNameInput = document.getElementById('storageKeyName');
                 let keyName = storageKeyNameInput.value.trim();
                 
@@ -975,9 +1050,10 @@ JIn Southville 1, Southville City
                     compPhone: getFormVal('compPhone'),
                     compEmail: getFormVal('compEmail'),
                     custName: getFormVal('custName'),
+                    custPhone: getFormVal('custPhone'),
+                    custEmail: getFormVal('custEmail'),
                     custCompany: getFormVal('custCompany'),
                     custAddr: getFormVal('custAddr'),
-                    custEmail: getFormVal('custEmail'),
                     invNumber: getFormVal('invNumber'),
                     invCurrency: getFormVal('invCurrency'),
                     invDate: getFormVal('invDate'),
@@ -1062,10 +1138,13 @@ JIn Southville 1, Southville City
                     document.getElementById('compAddr').value = data.compAddr || '';
                     document.getElementById('compPhone').value = data.compPhone || '';
                     document.getElementById('compEmail').value = data.compEmail || '';
+                    
                     document.getElementById('custName').value = data.custName || '';
+                    document.getElementById('custPhone').value = data.custPhone || '';
+                    document.getElementById('custEmail').value = data.custEmail || '';
                     document.getElementById('custCompany').value = data.custCompany || '';
                     document.getElementById('custAddr').value = data.custAddr || '';
-                    document.getElementById('custEmail').value = data.custEmail || '';
+                    
                     document.getElementById('invNumber').value = data.invNumber || '';
                     document.getElementById('invCurrency').value = data.invCurrency || 'MYR';
                     document.getElementById('invDate').value = data.invDate || '';
@@ -1173,6 +1252,8 @@ JIn Southville 1, Southville City
             }
 
             async function downloadPDF() {
+                if(!validateRequiredFields()) return;
+
                 try {
                     const builtBlob = await buildPdfBlobData();
                     const absoluteFilename = generateFileNamingString();
@@ -1188,6 +1269,8 @@ JIn Southville 1, Southville City
             }
 
             async function sharePDF() {
+                if(!validateRequiredFields()) return;
+
                 try {
                     const builtBlob = await buildPdfBlobData();
                     const absoluteFilename = generateFileNamingString();
@@ -1197,7 +1280,7 @@ JIn Southville 1, Southville City
                         await navigator.share({
                             files: [standaloneSystemFile],
                             title: absoluteFilename.replace('.pdf', ''),
-                            text: `Document generated via Invoice Studio.`
+                            text: `Document generated via Invoice System.`
                         });
                     } else {
                         downloadPDF();
@@ -1208,6 +1291,8 @@ JIn Southville 1, Southville City
             }
 
             function printInvoice() { 
+                if(!validateRequiredFields()) return;
+
                 const previewEl = document.getElementById('invoicePreview');
                 const originalWidth = previewEl.style.width;
                 
@@ -1227,14 +1312,19 @@ JIn Southville 1, Southville City
                 
                 document.getElementById('storageKeyName').value = '';
                 document.getElementById('custName').value = '';
+                document.getElementById('custPhone').value = '';
+                document.getElementById('custEmail').value = '';
                 document.getElementById('custCompany').value = '';
                 document.getElementById('custAddr').value = '';
-                document.getElementById('custEmail').value = '';
+                
                 document.getElementById('discountType').value = 'none';
                 document.getElementById('discountValue').value = '0';
                 document.getElementById('docTypeSelect').value = 'INVOICE';
                 document.getElementById('invNumber').value = 'INV-2026-0042';
                 
+                document.getElementById('custName').classList.remove('input-error');
+                document.getElementById('custPhone').classList.remove('input-error');
+
                 tbody.innerHTML = '';
                 isPaid = false;
                 document.getElementById('paidNavBtn').classList.remove('active');
