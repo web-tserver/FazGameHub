@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
-    <title>FAZGAME | Hub Dashboard — Pixel Title</title>
-    <meta name="description" content="FAZGAME Hub – Invoice, Build Tracker, Profit & Loss, PC Builder, Inventory Management. Clean glassmorphism with pixel gaming title.">
+    <title>FAZGAME | Dashboard — Pixel Title</title>
+    <meta name="description" content="FAZGAME – Invoice, Build Tracker, Profit & Loss, PC Builder, Inventory Management. Clean glassmorphism with pixel gaming title.">
     <!-- Fonts: Inter for body, Press Start 2P for title -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -42,7 +42,7 @@
             position: relative;
         }
 
-        /* subtle pixel grid background (clean, not overwhelming) */
+        /* subtle pixel grid background */
         body::before {
             content: '';
             position: fixed;
@@ -55,7 +55,7 @@
             background-size: 32px 32px;
         }
 
-        /* header – glassmorphism (original style) */
+        /* header – glassmorphism */
         header {
             position: sticky;
             top: 0;
@@ -63,7 +63,7 @@
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
             border-bottom: 1px solid var(--border-glass);
-            padding: 12px 20px;
+            padding: 10px 16px;
             flex-shrink: 0;
         }
         @media (min-width: 768px) {
@@ -76,46 +76,56 @@
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 12px;
         }
         .header-left {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
         .logo-img {
-            height: 40px;
+            height: 36px;
             width: auto;
             opacity: 0.95;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
+        @media (min-width: 768px) {
+            .logo-img { height: 40px; }
+        }
         .logo-text {
             font-family: 'Press Start 2P', monospace;
-            font-size: 1rem;
+            font-size: 0.85rem;
             letter-spacing: 1px;
+        }
+        @media (min-width: 768px) {
+            .logo-text { font-size: 1rem; }
         }
         .logo-text span:last-child {
             color: var(--accent);
         }
         .header-logos {
             display: flex;
-            gap: 16px;
+            gap: 12px;
             align-items: center;
         }
         .header-logos img {
-            width: 20px;
+            width: 18px;
             transition: 0.2s;
             filter: invert(1);
             opacity: 0.7;
+        }
+        @media (min-width: 768px) {
+            .header-logos img { width: 20px; }
         }
         .header-logos img:hover {
             opacity: 1;
             transform: translateY(-2px);
         }
-        @media (max-width: 680px) {
+        @media (max-width: 560px) {
             .header-inner {
                 flex-direction: column;
                 align-items: center;
+                gap: 10px;
             }
             .header-logos {
                 justify-content: center;
@@ -125,7 +135,7 @@
         /* main content */
         .main-content {
             flex: 1;
-            padding: 32px 20px;
+            padding: 24px 16px;
         }
         @media (min-width: 768px) {
             .main-content { padding: 48px 24px; }
@@ -136,53 +146,79 @@
             width: 100%;
         }
 
-        /* Pixel title – exact styling from the concept (neon, glitchy, Press Start 2P) */
+        /* Pixel title – "FAZ Game" (removed "Hub") */
         .hub-header {
             text-align: center;
-            margin-bottom: 48px;
+            margin-bottom: 32px;
+        }
+        @media (min-width: 768px) {
+            .hub-header { margin-bottom: 48px; }
         }
         .hub-title {
             font-family: 'Press Start 2P', monospace;
-            font-size: clamp(1.4rem, 8vw, 2.4rem);
-            letter-spacing: 2px;
-            margin-bottom: 16px;
+            font-size: clamp(1.2rem, 6vw, 2.4rem);
+            letter-spacing: 1px;
+            margin-bottom: 14px;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 8px;
-            text-shadow: 3px 3px 0 #ff00aa, 0 0 8px var(--accent);
+            gap: 6px;
+            text-shadow: 2px 2px 0 #ff00aa, 0 0 6px var(--accent);
+        }
+        @media (min-width: 768px) {
+            .hub-title {
+                letter-spacing: 2px;
+                gap: 8px;
+                text-shadow: 3px 3px 0 #ff00aa, 0 0 8px var(--accent);
+            }
         }
         .faz-white {
             color: var(--text);
         }
-        .game-hub-yellow {
+        .game-yellow {
             color: var(--accent);
-            text-shadow: 0 0 6px currentColor;
+            text-shadow: 0 0 4px currentColor;
         }
         .hub-system-label {
             font-family: 'Press Start 2P', monospace;
-            font-size: 0.7rem;
+            font-size: 0.55rem;
             background: #00000077;
             display: inline-block;
-            padding: 8px 16px;
+            padding: 6px 12px;
             border: 2px solid var(--accent);
-            box-shadow: 4px 4px 0 black;
+            box-shadow: 3px 3px 0 black;
             backdrop-filter: blur(4px);
             letter-spacing: 1px;
         }
+        @media (min-width: 768px) {
+            .hub-system-label {
+                font-size: 0.7rem;
+                padding: 8px 16px;
+                box-shadow: 4px 4px 0 black;
+            }
+        }
 
-        /* Card grid – responsive (2 cols on mobile, 3 on desktop) */
+        /* Card grid – responsive, optimized for mobile */
         .card-grid {
             display: grid;
-            gap: 24px;
+            gap: 16px;
         }
-        @media (max-width: 640px) {
+        /* Very small phones: 1 column for better readability */
+        @media (max-width: 480px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+        }
+        /* Medium phones & portrait tablets: 2 columns */
+        @media (min-width: 481px) and (max-width: 768px) {
             .card-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 16px;
             }
         }
-        @media (min-width: 641px) and (max-width: 1024px) {
+        /* Larger tablets and desktops: 2 or 3 columns */
+        @media (min-width: 769px) and (max-width: 1024px) {
             .card-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 24px;
@@ -195,7 +231,7 @@
             }
         }
 
-        /* Card – clean glassmorphism (matches header) */
+        /* Card – glassmorphism, larger tap area */
         .hub-card {
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
@@ -206,13 +242,19 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 24px 16px;
+            padding: 20px 12px;
             text-align: center;
-            transition: all 0.25s ease;
+            transition: all 0.2s ease;
             cursor: pointer;
             text-decoration: none;
             color: inherit;
             box-shadow: var(--card-shadow);
+            min-height: 140px;
+        }
+        @media (min-width: 768px) {
+            .hub-card {
+                padding: 24px 16px;
+            }
         }
         .hub-card:hover {
             background: rgba(30, 32, 40, 0.6);
@@ -225,42 +267,66 @@
 
         /* Icon */
         .card-icon {
-            width: 64px;
-            height: 64px;
+            width: 56px;
+            height: 56px;
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid var(--accent);
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 14px;
             transition: 0.2s;
+        }
+        @media (min-width: 768px) {
+            .card-icon {
+                width: 64px;
+                height: 64px;
+                margin-bottom: 20px;
+            }
         }
         .hub-card:hover .card-icon {
             border-color: #fff;
             background: rgba(0, 0, 0, 0.5);
         }
         .card-icon svg {
-            width: 34px;
-            height: 34px;
+            width: 30px;
+            height: 30px;
             stroke: var(--accent);
             stroke-width: 1.8;
             fill: none;
         }
+        @media (min-width: 768px) {
+            .card-icon svg {
+                width: 34px;
+                height: 34px;
+            }
+        }
         .card-title {
             font-family: 'Clash Display', sans-serif;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1rem;
             letter-spacing: -0.01em;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
+        }
+        @media (min-width: 768px) {
+            .card-title {
+                font-size: 1.1rem;
+                margin-bottom: 6px;
+            }
         }
         .card-desc {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: var(--text-dim);
         }
+        @media (min-width: 768px) {
+            .card-desc {
+                font-size: 0.8rem;
+            }
+        }
         .card-arrow {
-            margin-top: 14px;
-            font-size: 1rem;
+            margin-top: 12px;
+            font-size: 0.9rem;
             opacity: 0;
             transform: translateX(-4px);
             transition: 0.2s;
@@ -274,27 +340,33 @@
         /* Footer */
         footer {
             text-align: center;
-            padding: 24px 20px;
+            padding: 18px 16px;
             color: var(--text-dim);
-            font-size: 13px;
+            font-size: 11px;
             border-top: 1px solid var(--border-glass);
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
             flex-shrink: 0;
         }
+        @media (min-width: 768px) {
+            footer {
+                padding: 24px 20px;
+                font-size: 13px;
+            }
+        }
 
-        /* Back to top – clean */
+        /* Back to top – thumb-friendly */
         .back-to-top {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 44px;
-            height: 44px;
+            bottom: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
             background: var(--accent);
             color: #000;
             border: none;
             border-radius: 12px;
-            font-size: 22px;
+            font-size: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -304,6 +376,16 @@
             transition: 0.2s;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             font-weight: bold;
+            touch-action: manipulation;
+            z-index: 999;
+        }
+        @media (min-width: 768px) {
+            .back-to-top {
+                width: 52px;
+                height: 52px;
+                bottom: 28px;
+                right: 28px;
+            }
         }
         .back-to-top.visible {
             opacity: 1;
@@ -311,6 +393,10 @@
         }
         .back-to-top:active {
             transform: scale(0.94);
+        }
+
+        img, svg {
+            max-width: 100%;
         }
     </style>
 </head>
@@ -336,16 +422,15 @@
     <main class="main-content">
         <div class="hub-container">
             <div class="hub-header">
-                <!-- Pixel title (exactly from concept) -->
+                <!-- Title without "Hub": "FAZ Game" -->
                 <h1 class="hub-title">
                     <span class="faz-white">FAZ</span>
-                    <span class="game-hub-yellow">Game Hub</span>
+                    <span class="game-yellow">Game</span>
                 </h1>
                 <div class="hub-system-label">▶ SYSTEM MANAGEMENT ◀</div>
             </div>
 
             <div class="card-grid">
-                <!-- Invoice / Quotation (linked to invoice.html) -->
                 <a href="invoice.html" class="hub-card">
                     <div class="card-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -360,7 +445,6 @@
                     <div class="card-arrow">→</div>
                 </a>
 
-                <!-- Build Progress Tracker -->
                 <a href="#" class="hub-card">
                     <div class="card-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -373,7 +457,6 @@
                     <div class="card-arrow">→</div>
                 </a>
 
-                <!-- Profit & Loss -->
                 <a href="#" class="hub-card">
                     <div class="card-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -386,7 +469,6 @@
                     <div class="card-arrow">→</div>
                 </a>
 
-                <!-- Custom PC Builder + Compatibility -->
                 <a href="#" class="hub-card">
                     <div class="card-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -401,7 +483,6 @@
                     <div class="card-arrow">→</div>
                 </a>
 
-                <!-- Inventory Management -->
                 <a href="#" class="hub-card">
                     <div class="card-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -427,7 +508,8 @@
             if (window.scrollY > 200) backToTop.classList.add('visible');
             else backToTop.classList.remove('visible');
         });
-        backToTop.addEventListener('click', () => {
+        backToTop.addEventListener('click', (e) => {
+            e.preventDefault();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
         backToTop.addEventListener('touchstart', (e) => {
@@ -445,6 +527,9 @@
         // Prevent default on placeholder links
         document.querySelectorAll('.hub-card[href="#"]').forEach(card => {
             card.addEventListener('click', (e) => e.preventDefault());
+            card.addEventListener('touchstart', (e) => {
+                if (card.getAttribute('href') === '#') e.preventDefault();
+            });
         });
     </script>
 </body>
