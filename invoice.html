@@ -265,7 +265,13 @@ JIn Southville 1, Southville City,
             <div class="form-group"><label>Phone <span style="color:var(--danger);">*</span></label><input type="tel" id="custPhone" placeholder="e.g. 0123456789"></div>
             <div class="form-group"><label>Email (Optional)</label><input type="email" id="custEmail" placeholder="e.g. ahmad@email.com"></div>
             <div class="form-group"><label>Company Name (Optional)</label><input type="text" id="custCompany" placeholder="e.g. Fikri Enterprise"></div>
-            <div class="form-group"><label>Billing Address (Optional)</label><textarea id="custAddr" rows="2" placeholder="e.g. Jalan Ampang, 68000 Ampang"></textarea></div>
+            
+            <label style="font-size:0.7rem; font-weight:600; text-transform:uppercase; color:var(--text-dim); margin-top:10px; display:block;">Billing Address (Optional)</label>
+            <div class="form-group"><input type="text" id="custAddr1" placeholder="Address Line 1" oninput="app.updatePreview()"></div>
+            <div class="form-group"><input type="text" id="custAddr2" placeholder="Address Line 2" oninput="app.updatePreview()"></div>
+            <div class="form-group"><input type="text" id="custAddr3" placeholder="Address Line 3" oninput="app.updatePreview()"></div>
+            <div class="form-group"><input type="text" id="custAddr4" placeholder="City, Postcode, State" oninput="app.updatePreview()"></div>
+            
             <hr style="border-color:var(--border);">
             <div class="form-group"><label id="formSerialLabel">Document No.</label><input type="text" id="invNumber" value="INV-2026-0042"></div>
             <div class="form-row"><div class="form-group"><label>Date Issued</label><input type="date" id="invDate"></div><div class="form-group"><label>Due Date</label><input type="date" id="invDueDate"></div></div>
@@ -329,6 +335,7 @@ JIn Southville 1, Southville City,
     };
 
     const app = (function() {
+        // ---------- ENHANCED PRODUCT DATABASE (with category) ----------
         const PRODUCT_LIST = [
             { name: "AMD Ryzen 5 5500", category: "cpu", price: 415 },
             { name: "AMD Ryzen 5 5600", category: "cpu", price: 540 },
@@ -528,7 +535,11 @@ JIn Southville 1, Southville City,
             const { items, subtotal, discount, total } = executeCalculations();
             const docType = document.getElementById('docTypeSelect').value;
             const cName = gv('compName'), cSSM = gv('compSSM'), cAddr = gv('compAddr'), cPhone = gv('compPhone'), cEmail = gv('compEmail');
-            const custName = gv('custName'), custPhone = gv('custPhone'), custEmail = gv('custEmail'), custCo = gv('custCompany'), custAddr = gv('custAddr');
+            
+            const custName = gv('custName'), custPhone = gv('custPhone'), custEmail = gv('custEmail'), custCo = gv('custCompany');
+            const addrLines = [gv('custAddr1'), gv('custAddr2'), gv('custAddr3'), gv('custAddr4')].filter(l => l.trim() !== "");
+            const custAddrHtml = addrLines.length ? `<p style="white-space:pre-line; font-size:12px; color:#475569; margin-bottom:6px;">${addrLines.map(escapeHtml).join('<br>')}</p>` : '';
+            
             const docSerial = gv('invNumber'), dateIssued = fmtDate(gv('invDate')), dateLimit = fmtDate(gv('invDueDate'));
             const bName = gv('bankName'), bHolder = gv('acctName'), bRouteNo = gv('acctNumber');
             const notes = gv('notesText');
@@ -536,7 +547,6 @@ JIn Southville 1, Southville City,
             let rowsHtml = '';
             items.forEach((item,i) => {
                 const det = item.detail ? `<span class="inv-item-detail">${escapeHtml(item.detail)}</span>` : '';
-                // BUG FIX: Replaced corrupted NonNull string with proper closing/opening </td><td> tags.
                 rowsHtml += `<tr><td style="text-align:center">${i+1}</td><td><span class="inv-item-name">${escapeHtml(item.name)}</span>${det}</td><td class="right">${item.qty}</td><td class="right">${formatMoney(item.price)}</td><td class="right">${formatMoney(item.amount)}</td></tr>`;
             });
             if(!rowsHtml) rowsHtml = `<tr><td colspan="5" style="text-align:center">No items added</td></tr>`;
@@ -558,12 +568,12 @@ JIn Southville 1, Southville City,
                 <p style="font-size:12px; color:#475569; margin-bottom:4px;">📞 ${escapeHtml(cPhone)}</p>
                 <p style="font-size:12px; color:#475569;">✉️ ${escapeHtml(cEmail)}</p>
             `;
-            
+
             const billToHtml = `
                 <h4 style="margin-bottom:8px; color:#0f172a;">Bill To</h4>
                 <p style="font-size:16px; font-weight:700; margin-bottom:4px; color:#0f172a;">${escapeHtml(custName)||'—'}</p>
                 ${custCo ? `<p style="font-size:12px; color:#475569; font-weight:600; margin-bottom:4px;">${escapeHtml(custCo)}</p>` : ''}
-                ${custAddr ? `<p style="white-space:pre-line; font-size:12px; color:#475569; margin-bottom:6px;">${escapeHtml(custAddr)}</p>` : ''}
+                ${custAddrHtml}
                 ${custPhone ? `<p style="font-size:12px; color:#475569; margin-bottom:4px;">📞 ${escapeHtml(custPhone)}</p>` : ''}
                 ${custEmail ? `<p style="font-size:12px; color:#475569;">✉️ ${escapeHtml(custEmail)}</p>` : ''}
             `;
@@ -578,6 +588,8 @@ JIn Southville 1, Southville City,
                 </div>
                 <div style="margin-bottom:20px;">${billToHtml}</div>
                 <table class="inv-table"><thead><tr><th>#</th><th>Description</th><th class="right">Qty</th><th class="right">Unit Price</th><th class="right">Total</th></tr></thead><tbody>${rowsHtml}</tbody></table>
+                <div class="totals-section"><table class="totals-table"><tr><td>Subtotal</td><td class="right">${formatMoney(subtotal)}</td></tr>${discount>0 ? `<tr><td style="color:#dc2626;">Discount</td><td class="right" style="color:#dc2626;">-${formatMoney(discount)}</td></tr>` : ''}<tr class="grand-total"><td>Total Amount</td><td class="right">${formatMoney(total)}</td></tr></table></div>
+                ${footer}
             `;
         }
 
@@ -616,14 +628,16 @@ JIn Southville 1, Southville City,
             document.getElementById('storageKeyName').value = `${prefix} - ${c} - ${d}`; 
         }
 
+        // ---------- PERSISTENCE (UPDATED FOR 4-LINE ADDRESS) ----------
         function getCurrentPayload() { 
             return { 
                 docType: gv('docTypeSelect'), compName: gv('compName'), compSSM: gv('compSSM'), compAddr: gv('compAddr'),
                 compPhone: gv('compPhone'), compEmail: gv('compEmail'), custName: gv('custName'), custPhone: gv('custPhone'),
-                custEmail: gv('custEmail'), custCompany: gv('custCompany'), custAddr: gv('custAddr'), invNumber: gv('invNumber'),
-                invCurrency: gv('invCurrency'), invDate: gv('invDate'), invDueDate: gv('invDueDate'), discountType: gv('discountType'),
-                discountValue: gv('discountValue'), bankName: gv('bankName'), acctName: gv('acctName'), acctNumber: gv('acctNumber'),
-                notesText: gv('notesText'), items: readFormLineItems(), paidState: isPaid, timestamp: Date.now()
+                custEmail: gv('custEmail'), custCompany: gv('custCompany'), 
+                custAddr1: gv('custAddr1'), custAddr2: gv('custAddr2'), custAddr3: gv('custAddr3'), custAddr4: gv('custAddr4'),
+                invNumber: gv('invNumber'), invCurrency: gv('invCurrency'), invDate: gv('invDate'), invDueDate: gv('invDueDate'), 
+                discountType: gv('discountType'), discountValue: gv('discountValue'), bankName: gv('bankName'), acctName: gv('acctName'), 
+                acctNumber: gv('acctNumber'), notesText: gv('notesText'), items: readFormLineItems(), paidState: isPaid, timestamp: Date.now()
             }; 
         }
         
@@ -662,7 +676,7 @@ JIn Southville 1, Southville City,
                 const m = (JSON.parse(localStorage.getItem('fge_master_doc_index') || '[]')).find(i => i.name.toLowerCase() === key); 
                 document.getElementById('storageKeyName').value = m ? m.name : key; 
                 
-                ['docTypeSelect','compName','compSSM','compAddr','compPhone','compEmail','custName','custPhone','custEmail','custCompany','custAddr','invNumber','invCurrency','invDate','invDueDate','discountType','discountValue','bankName','acctName','acctNumber','notesText'].forEach(id => { 
+                ['docTypeSelect','compName','compSSM','compAddr','compPhone','compEmail','custName','custPhone','custEmail','custCompany','custAddr1','custAddr2','custAddr3','custAddr4','invNumber','invCurrency','invDate','invDueDate','discountType','discountValue','bankName','acctName','acctNumber','notesText'].forEach(id => { 
                     if(d[id] !== undefined) document.getElementById(id).value = d[id];
                 }); 
                 
@@ -731,7 +745,7 @@ JIn Southville 1, Southville City,
             reader.onload = e => { 
                 try { 
                     const d = JSON.parse(e.target.result); 
-                    ['docTypeSelect','compName','compSSM','compAddr','compPhone','compEmail','custName','custPhone','custEmail','custCompany','custAddr','invNumber','invCurrency','invDate','invDueDate','discountType','discountValue','bankName','acctName','acctNumber','notesText'].forEach(id => { 
+                    ['docTypeSelect','compName','compSSM','compAddr','compPhone','compEmail','custName','custPhone','custEmail','custCompany','custAddr1','custAddr2','custAddr3','custAddr4','invNumber','invCurrency','invDate','invDueDate','discountType','discountValue','bankName','acctName','acctNumber','notesText'].forEach(id => { 
                         if(d[id] !== undefined) document.getElementById(id).value = d[id]; 
                     }); 
                     tbody.innerHTML = ''; 
@@ -843,7 +857,7 @@ JIn Southville 1, Southville City,
         
         function clearForm() { 
             if(!confirm('Reset all?')) return; 
-            ['storageKeyName','custName','custPhone','custEmail','custCompany','custAddr'].forEach(id => document.getElementById(id).value = ''); 
+            ['storageKeyName','custName','custPhone','custEmail','custCompany','custAddr1','custAddr2','custAddr3','custAddr4'].forEach(id => document.getElementById(id).value = ''); 
             document.getElementById('discountType').value = 'none'; 
             document.getElementById('discountValue').value = '0'; 
             document.getElementById('docTypeSelect').value = 'INVOICE'; 
@@ -864,7 +878,6 @@ JIn Southville 1, Southville City,
             searchInput.addEventListener('focus', runSearchProcessing); 
             document.addEventListener('click', e => { if(!e.target.closest('.item-search-area')) searchDropdown.classList.remove('show'); }); 
             
-            // BUG FIX: Global listener for real-time preview updates across all text fields
             document.querySelector('.main-container').addEventListener('input', (e) => {
                 const ignoreIds = ['itemSearch', 'storageKeyName', 'importJsonInput'];
                 if (e.target.matches('input, textarea, select') && !ignoreIds.includes(e.target.id)) {
